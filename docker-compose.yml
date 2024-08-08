@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgres://postgres:12345re@db:5432/ecommerce_db"
+    command: >
+      sh -c "npm run deploy"
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ecommerce_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345re
+    ports:
+      - "5433:5432"

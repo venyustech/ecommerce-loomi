@@ -1,0 +1,15 @@
+{
+    "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+    "rules": {
+      "curly": ["error", "multi-line"],
+      "prettier/prettier": [
+        "error",
+        {
+          "semi": false,
+          "trailingComma": "none",
+          "singleQuote": true
+        }
+      ]
+    }
+  }
+  

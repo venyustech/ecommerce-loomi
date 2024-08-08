@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  Admin
+  Client
+}
+
+enum OrderStatus {
+  Received
+  InPreparation
+  Dispatched
+  Delivered
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      UserRole
+
+  Client Client[]
+
+  @@map("user")
+}
+
+model Client {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  fullName  String
+  contact   String
+  address   String
+  isActive  Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Order Order[]
+
+  @@map("client")
+}
+
+model Ecommerce {
+  id       Int     @id @default(autoincrement())
+  name     String
+  document String
+  isActive Boolean
+  type     String
+
+  Product Product[]
+
+  @@map("ecommerce")
+}
+
+model Product {
+  id            Int         @id @default(autoincrement())
+  name          String
+  description   String
+  price         Float
+  stockQuantity Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  category      String
+  color         String
+  ecommerce     Ecommerce   @relation(fields: [ecommerceId], references: [id])
+  ecommerceId   Int
+  OrderItem     OrderItem[]
+
+  @@map("product")
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  client      Client      @relation(fields: [clientId], references: [id])
+  clientId    Int
+  status      OrderStatus
+  createdAt   DateTime    @default(now())
+  totalAmount Int
+  OrderItem   OrderItem[]
+
+  @@map("order")
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
+  unitPrice Int
+  subtotal  Int     @default(0)
+
+  @@map("order_item")
+}
