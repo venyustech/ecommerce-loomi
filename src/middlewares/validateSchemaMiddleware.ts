@@ -1,9 +1,10 @@
-import { NextFunction, Request, Response } from "express"
-import { ObjectSchema } from "joi"
+import { NextFunction, Request, Response } from 'express'
+import { ObjectSchema, StringSchema } from 'joi'
 
-export function validateSchemaMiddleware(schema: ObjectSchema) {
+export function validateSchemaMiddleware(schema: ObjectSchema | StringSchema, validationPayload?: unknown) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const validation = schema.validate(req.body)
+    const payloadToValidate = validationPayload || req.body
+    const validation = schema.validate(payloadToValidate)
     if (validation.error) {
       return res.status(400).send({ error: validation.error.message })
     }
