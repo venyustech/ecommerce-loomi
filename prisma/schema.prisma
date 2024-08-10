@@ -28,7 +28,8 @@ model User {
   updatedAt DateTime @updatedAt
   role      UserRole
 
-  Client Client[]
+  Client    Client[]
+  Ecommerce Ecommerce[]
 
   @@map("user")
 }
@@ -51,6 +52,8 @@ model Client {
 
 model Ecommerce {
   id       Int     @id @default(autoincrement())
+  owner    User    @relation(fields: [ownerId], references: [id])
+  ownerId  Int
   name     String
   document String
   isActive Boolean

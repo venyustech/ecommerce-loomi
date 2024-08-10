@@ -30,8 +30,6 @@ async function findByUserId(userId: number) {
 }
 
 async function findAllClients(email?: string, initialDate?: Date, endDate?: Date) {
-  console.log(initialDate)
-  console.log(endDate)
   return prisma.client.findMany({
     where: {
       ...(email && { user: { email } }),

@@ -17,7 +17,7 @@ adminRouter.put(
   clientController.updateUserByAdmin
 )
 adminRouter.get(
-  '/admin/user/find',
+  '/admin/user/findAll',
   ensureAuthenticatedMiddleware,
   ensureAdminMiddleware,
   validateQuery(findClientQuerySchema),
