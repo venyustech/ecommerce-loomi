@@ -17,7 +17,6 @@ async function update(userId: number, clientPayload: CreateClientData) {
 }
 async function updateByAdmin(userEmail: string, clientPayload: CreateClientData) {
   const clientData = await findClientByUserEmailOrFail(userEmail)
-  console.log('oi')
   return clientRepository.updateById(clientPayload, clientData.id)
 }
 

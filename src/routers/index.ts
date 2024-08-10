@@ -5,6 +5,7 @@ import clientRouter from './clientRouter.js'
 import adminRouter from './adminRouter.js'
 import ecommerceRouter from './ecommerceRouter.js'
 import productRouter from './productRouter.js'
+import orderRouter from './orderRouter.js'
 
 const router = Router()
 router.use(healthRouter)
@@ -13,5 +14,6 @@ router.use(clientRouter)
 router.use(adminRouter)
 router.use(ecommerceRouter)
 router.use(productRouter)
+router.use(orderRouter)
 
 export default router

@@ -17,6 +17,7 @@ enum OrderStatus {
   InPreparation
   Dispatched
   Delivered
+  Failed
 }
 
 model User {

@@ -50,10 +50,18 @@ async function searchProducts(filters: SearchFilters) {
   })
 }
 
+async function updateStock(productId: number, newQuantity: number) {
+  return prisma.product.update({
+    where: { id: productId },
+    data: { stockQuantity: { decrement: newQuantity } }
+  })
+}
+
 export default {
   createProduct,
   updateProduct,
   deleteProduct,
   findProductById,
-  searchProducts
+  searchProducts,
+  updateStock
 }

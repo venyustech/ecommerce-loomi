@@ -16,7 +16,6 @@ async function update(productId: number, productPayload: CreateProductData) {
 async function deleteProduct(productId: number, adminId: number) {
   const product = await productRepository.findProductById(productId)
   if (!product) throw notFoundError('Product not found')
-  console.log(product)
   if (adminId !== product.ecommerce.ownerId) throw unauthorizedError('You must be the owner of this product')
   await productRepository.deleteProduct(productId)
 }
