@@ -22,7 +22,7 @@ async function removeFromOrder(orderItemId: number) {
 
 async function createOrder(userId: number) {
   const client = await clientRepository.findByUserId(userId)
-  if (!client) throw notFoundError
+  if (!client) throw notFoundError('You must register your client details first')
   return orderRepository.createOrder({
     clientId: client.id,
     status: 'Received',

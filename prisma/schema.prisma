@@ -52,13 +52,14 @@ model Client {
 }
 
 model Ecommerce {
-  id       Int     @id @default(autoincrement())
-  owner    User    @relation(fields: [ownerId], references: [id])
-  ownerId  Int
-  name     String
-  document String
-  isActive Boolean
-  type     String
+  id        Int      @id @default(autoincrement())
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  name      String
+  document  String
+  isActive  Boolean
+  type      String
+  createdAt DateTime @default(now())
 
   Product Product[]
 
@@ -95,14 +96,15 @@ model Order {
 }
 
 model OrderItem {
-  id        Int     @id @default(autoincrement())
-  order     Order   @relation(fields: [orderId], references: [id])
+  id        Int      @id @default(autoincrement())
+  order     Order    @relation(fields: [orderId], references: [id])
   orderId   Int
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
   productId Int
   quantity  Int
   unitPrice Int
-  subtotal  Int     @default(0)
+  subtotal  Int      @default(0)
+  createdAt DateTime @default(now())
 
   @@map("order_item")
 }

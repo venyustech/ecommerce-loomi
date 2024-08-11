@@ -50,6 +50,16 @@ async function searchProducts(filters: SearchFilters) {
   })
 }
 
+async function findProductsByOwnerId(userId: number) {
+  return await prisma.product.findMany({
+    where: {
+      ecommerce: {
+        ownerId: userId
+      }
+    }
+  })
+}
+
 async function updateStock(productId: number, newQuantity: number) {
   return prisma.product.update({
     where: { id: productId },
@@ -63,5 +73,6 @@ export default {
   deleteProduct,
   findProductById,
   searchProducts,
-  updateStock
+  updateStock,
+  findProductsByOwnerId
 }

@@ -53,6 +53,23 @@ async function updateOrderStatus(orderId: number, newStatus: OrderStatus) {
   })
 }
 
+async function findOrdersByProductIdGroup(startDate: Date, endDate: Date, productIds: number[]) {
+  return await prisma.orderItem.groupBy({
+    by: ['productId'],
+    _sum: {
+      quantity: true,
+      subtotal: true
+    },
+    where: {
+      productId: { in: productIds },
+      createdAt: {
+        gte: startDate,
+        lte: endDate
+      }
+    }
+  })
+}
+
 export default {
   findById,
   createOrderItem,
@@ -61,5 +78,6 @@ export default {
   findOrderItemById,
   updateOrderStatus,
   findManyOrderItem,
-  createOrder
+  createOrder,
+  findOrdersByProductIdGroup
 }
