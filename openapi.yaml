@@ -1,0 +1,486 @@
+openapi: 3.0.0
+info:
+  title: Ecommerce API
+  version: '1.0.0'
+  description: API para gerenciamento de um sistema de ecommerce loomi.
+servers:
+  - url: https://ecommerce-loomi.onrender.com
+    description: Servidor de Desenvolvimento ou docker na 3001
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Client:
+      type: object
+      properties:
+        id:
+          type: integer
+        fullName:
+          type: string
+        contact:
+          type: string
+        address:
+          type: string
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        stockQuantity:
+          type: integer
+        category:
+          type: string
+        color:
+          type: string
+        ecommerceId:
+          type: integer
+    OrderItem:
+      type: object
+      properties:
+        orderId:
+          type: integer
+        productId:
+          type: integer
+        quantity:
+          type: integer
+    Report:
+      type: object
+      properties:
+        productId:
+          type: integer
+        quantity:
+          type: integer
+        subtotal:
+          type: number
+        productName:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        category:
+          type: string
+        color:
+          type: string
+        stockQuantity:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+paths:
+  /client/create:
+    post:
+      summary: Cria um novo cliente
+      tags:
+        - Cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '201':
+          description: Cliente criado com sucesso
+      security:
+        - bearerAuth: []
+  /client/update:
+    put:
+      summary: Atualiza um cliente existente
+      tags:
+        - Cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '200':
+          description: Cliente atualizado com sucesso
+      security:
+        - bearerAuth: []
+  /admin/user/findAll:
+    get:
+      summary: Lista todos os clientes baseados nos filtros
+      tags:
+        - Admin
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+          required: false
+          description: Filtra por e-mail
+        - in: query
+          name: initialDate
+          schema:
+            type: string
+            format: date
+          required: false
+          description: Data inicial para filtro de busca
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          required: false
+          description: Data final para filtro de busca
+      responses:
+        '200':
+          description: Lista de clientes encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+      security:
+        - bearerAuth: []
+  /admin/reports/generate:
+    get:
+      summary: Gera relatórios de vendas e faturamento
+      tags:
+        - Admin
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          required: false
+          description: Data de início do período do relatório
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          required: false
+          description: Data de término do período do relatório
+      responses:
+        '200':
+          description: Relatório gerado com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Report'
+      security:
+        - bearerAuth: []
+  /admin/update/{email}:
+    put:
+      summary: Atualiza os detalhes do cliente pelo e-mail
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+            example: example@example.com
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '200':
+          description: Cliente atualizado com sucesso
+      security:
+        - bearerAuth: []
+  /ecommerce/admin/create:
+    post:
+      summary: Cria uma nova loja de ecommerce
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Loja criada com sucesso
+      security:
+        - bearerAuth: []
+  /products/create:
+    post:
+      summary: Cria um novo produto
+      tags:
+        - Produto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Produto criado com sucesso
+      security:
+        - bearerAuth: []
+  /products/update/{id}:
+    put:
+      summary: Atualiza um produto existente
+      tags:
+        - Produto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Produto atualizado com sucesso
+      security:
+        - bearerAuth: []
+  /products/delete/{id}:
+    delete:
+      summary: Exclui um produto
+      tags:
+        - Produto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Produto excluído com sucesso
+      security:
+        - bearerAuth: []
+  /order/createOrder:
+    post:
+      summary: Cria um novo pedido
+      tags:
+        - Pedido
+      responses:
+        '201':
+          description: Pedido criado com sucesso
+      security:
+        - bearerAuth: []
+  /order/addItem:
+    post:
+      summary: Adiciona um item a um pedido
+      tags:
+        - Pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderItem'
+      responses:
+        '201':
+          description: Item adicionado ao pedido
+      security:
+        - bearerAuth: []
+  /order/removeItem/{id}:
+    delete:
+      summary: Remove um item de um pedido
+      tags:
+        - Pedido
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Item removido do pedido
+      security:
+        - bearerAuth: []
+  /order/updateItemQuantity/{id}:
+    patch:
+      summary: Atualiza a quantidade de um item em um pedido
+      tags:
+        - Pedido
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newQuantity:
+                  type: integer
+      responses:
+        '200':
+          description: Quantidade do item atualizada
+      security:
+        - bearerAuth: []
+  /order/updateStatus/{id}:
+    patch:
+      summary: Atualiza o status de um pedido
+      tags:
+        - Pedido
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newStatus:
+                  type: string
+                  enum: [Received, InPreparation, Dispatched, Delivered, Failed]
+      responses:
+        '200':
+          description: Status do pedido atualizado
+      security:
+        - bearerAuth: []
+  /order/simulatePayment/{id}:
+    post:
+      summary: Simula um pagamento para um pedido
+      tags:
+        - Pedido
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newQuantity:
+                  type: integer
+      responses:
+        '200':
+          description: Pagamento simulado com sucesso
+      security:
+        - bearerAuth: []
+  /health:
+    get:
+      summary: Verifica a saúde do serviço
+      tags:
+        - Sistema
+      responses:
+        '200':
+          description: Serviço está operacional
+  /products/find:
+    get:
+      summary: Busca produtos com filtros específicos
+      tags:
+        - Produto
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: false
+          description: Nome do produto para filtro
+        - in: query
+          name: minPrice
+          schema:
+            type: number
+          required: false
+          description: Preço mínimo do produto
+        - in: query
+          name: maxPrice
+          schema:
+            type: number
+          required: false
+          description: Preço máximo do produto
+        - in: query
+          name: categories
+          schema:
+            type: string
+          required: false
+          description: Categorias para filtro
+        - in: query
+          name: inStock
+          schema:
+            type: boolean
+          required: false
+          description: Filtra produtos em estoque
+      responses:
+        '200':
+          description: Lista de produtos encontrados
+      security:
+        - bearerAuth: []
+  /user/sign-up:
+    post:
+      summary: Registra um novo usuário
+      tags:
+        - Usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                name:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum: [Admin, Client]
+      responses:
+        '201':
+          description: Usuário registrado com sucesso
+  /user/sign-in:
+    post:
+      summary: Autentica um usuário
+      tags:
+        - Usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Usuário autenticado com sucesso
