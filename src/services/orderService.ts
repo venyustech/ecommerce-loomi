@@ -36,13 +36,13 @@ async function updateOrderItemQuantity(orderItemId: number, newQuantity: number)
 }
 
 async function updateOrderStatus(orderId: number, newStatus: OrderStatus) {
-  const order = orderRepository.findById(orderId)
+  const order = await orderRepository.findById(orderId)
   if (!order) throw notFoundError('Order not found')
   return orderRepository.updateOrderStatus(orderId, newStatus)
 }
 
 async function simulatePayment(orderId: number) {
-  const isPaymentSuccessful = Math.random() > 0.9
+  const isPaymentSuccessful = Math.random() > 0.5
   if (isPaymentSuccessful) {
     await updateOrderStatus(orderId, 'Received')
     await debitStock(orderId)
